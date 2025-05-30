@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Adivina el número</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      margin-left: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Adivina el número</h1>
+  <p>Estoy pensando en un número del 1 al 20.</p>
+
+  <div id="guess-section">
+    <input type="number" id="guess-input" min="1" max="20" />
+    <button id="guess-button">Adivinar</button>
+  </div>
+
+  <p id="result-message"></p>
+
+  <button id="restart-button" class="hidden">Jugar de nuevo</button>
+
+<script>
+  let secretNumber;
+  const guessInput = document.getElementById('guess-input');
+  const guessButton = document.getElementById('guess-button');
+  const resultMessage = document.getElementById('result-message');
+  const restartButton = document.getElementById('restart-button');
+
+  function initGame() {
+    secretNumber = Math.floor(Math.random() * 20) + 1;
+    resultMessage.textContent = '';
+    guessInput.value = '';
+    guessInput.disabled = false;
+    guessButton.disabled = false;
+    restartButton.classList.add('hidden');
+  }
+
+  guessButton.addEventListener('click', () => {
+    const guess = parseInt(guessInput.value, 10);
+    if (isNaN(guess)) {
+      resultMessage.textContent = 'Por favor, introduce un número.';
+      return;
+    }
+    if (guess < secretNumber) {
+      resultMessage.textContent = 'Muy bajo.';
+    } else if (guess > secretNumber) {
+      resultMessage.textContent = 'Muy alto.';
+    } else {
+      resultMessage.textContent = '¡Correcto!';
+      guessInput.disabled = true;
+      guessButton.disabled = true;
+      restartButton.classList.remove('hidden');
+    }
+  });
+
+  restartButton.addEventListener('click', initGame);
+
+  // Initialize game on load
+  initGame();
+</script>
+</body>
+</html>
