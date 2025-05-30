@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tic Tac Toe Online</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    #board { display: grid; grid-template-columns: repeat(3, 100px); grid-gap: 5px; margin: 20px auto; }
+    .cell { width: 100px; height: 100px; font-size: 2em; display: flex; align-items: center; justify-content: center; background: #f0f0f0; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Tic Tac Toe Online</h1>
+  <div id="status">Connecting...</div>
+  <div id="board"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const boardDiv = document.getElementById('board');
+    const statusDiv = document.getElementById('status');
+    let symbol = null;
+    let turn = null;
+
+    const cells = [];
+    for (let i = 0; i < 9; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.addEventListener('click', () => {
+        if (symbol && turn === symbol && cell.textContent === '') {
+          socket.emit('move', i);
+        }
+      });
+      boardDiv.appendChild(cell);
+      cells.push(cell);
+    }
+
+    socket.on('init', (data) => {
+      symbol = data.symbol;
+      turn = data.turn;
+      statusDiv.textContent = `You are ${symbol}. Turn: ${turn}`;
+      data.board.forEach((value, index) => { cells[index].textContent = value || ''; });
+    });
+
+    socket.on('state', (data) => {
+      turn = data.turn;
+      data.board.forEach((value, index) => { cells[index].textContent = value || ''; });
+      if (data.winner) {
+        statusDiv.textContent = data.winner === 'Tie' ? 'Game ended in a tie.' : `${data.winner} wins!`;
+      } else {
+        statusDiv.textContent = `You are ${symbol}. Turn: ${turn}`;
+      }
+    });
+
+    socket.on('message', msg => console.log(msg));
+    socket.on('full', () => { statusDiv.textContent = 'Room is full.'; });
+  </script>
+</body>
+</html>
