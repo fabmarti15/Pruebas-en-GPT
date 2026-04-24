@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ranking Pádel ELO</title>
+  <style>
+    :root{--bg:#07111f;--card:#0f1b2e;--card2:#14233b;--text:#f8fafc;--muted:#9fb0c8;--accent:#38d96b;--danger:#ff6262;--line:#263852;--gold:#facc15}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#12345a 0,#07111f 55%);color:var(--text)}header{padding:28px 16px 10px;text-align:center}h1{margin:0;font-size:30px}header p{margin:8px 0 0;color:var(--muted)}main{max-width:1040px;margin:0 auto;padding:16px;display:grid;gap:16px}.card{background:rgba(15,27,46,.94);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.26)}h2{margin:0 0 12px;font-size:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;font-size:14px}th{color:var(--muted);font-weight:700}tr:last-child td{border-bottom:0}.rank{font-weight:900}.elo{font-weight:900;color:var(--accent)}.gold{color:var(--gold)}input,textarea,button,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--card2);color:var(--text);font-size:16px}textarea{min-height:140px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}button{border:0;background:var(--accent);color:#06240f;font-weight:900;margin-top:10px;cursor:pointer}.secondary{background:#28415f;color:var(--text)}.danger{background:var(--danger);color:#320707}.hint{color:var(--muted);font-size:13px;line-height:1.45;margin-top:8px}.msg{white-space:pre-line;margin-top:10px;font-weight:800}.ok{color:var(--accent)}.err{color:var(--danger)}.pill{display:inline-block;padding:4px 9px;border-radius:999px;background:#1f3554;color:#cbd5e1;font-size:12px}.copybox{margin-top:10px}.small{font-size:13px;color:var(--muted)}.hidden{display:none}@media(max-width:760px){.grid{grid-template-columns:1fr}th,td{font-size:13px;padding:9px 6px}.hide-mobile{display:none}h1{font-size:25px}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Ranking Pádel ELO</h1>
+    <p>2v2 · 1 set · ranking histórico · link abierto</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Ranking</h2>
+      <div id="ranking"></div>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>Administrar resultados</h2>
+        <input id="adminKey" type="password" placeholder="Clave admin" />
+        <textarea id="playersInput" placeholder="Jugadores, uno por línea. Ejemplo:
+Juan
+Pedro
+Diego
+Pablo
+Toto
+Nico
+Seba
+Fabián"></textarea>
+        <button class="secondary" onclick="savePlayers()">Guardar jugadores iniciales</button>
+        <div class="hint">Haz esto una vez. La clave inicial es <b>padel</b>. Puedes cambiarla abajo.</div>
+
+        <hr style="border-color:var(--line);margin:18px 0">
+        <textarea id="resultsInput" placeholder="Pega resultados desde WhatsApp. Ejemplo:
+Juan / Pedro 6-2 Diego / Pablo
+Toto + Nico 7-6 Seba + Fabián"></textarea>
+        <button onclick="addResults()">Cargar resultados y generar link</button>
+        <button class="secondary" onclick="copyShareLink()">Copiar link actualizado para WhatsApp</button>
+        <button class="danger" onclick="resetAll()">Resetear ranking</button>
+        <div id="msg" class="msg"></div>
+        <div class="copybox hidden" id="shareBox">
+          <div class="small">Link actualizado:</div>
+          <textarea id="shareLink" readonly></textarea>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Historial</h2>
+        <div id="history"></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>Cómo usarlo</h2>
+      <div class="hint">
+        1. Define jugadores una vez.<br>
+        2. Cada semana pega los resultados.<br>
+        3. La página recalcula el ELO.<br>
+        4. Copia el link actualizado y mándalo por WhatsApp.<br><br>
+        Nota honesta: esta versión no usa servidor ni base de datos. El ranking viaja dentro del link, por eso funciona como URL abierta sin login ni instalación.
+      </div>
+    </section>
+  </main>
+
+<script>
+const ADMIN_DEFAULT = 'padel';
+let state = { players:{}, matches:[], admin:'padel' };
+
+function encodeState(){
+  const json = JSON.stringify(state);
+  const b64 = btoa(unescape(encodeURIComponent(json))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
+  return b64;
+}
+function decodeState(hash){
+  try{
+    if(!hash || hash.length < 2) return null;
+    let b64 = hash.replace(/^#/,'').replaceAll('-','+').replaceAll('_','/');
+    while(b64.length % 4) b64 += '=';
+    return JSON.parse(decodeURIComponent(escape(atob(b64))));
+  }catch(e){ return null; }
+}
+function getBaseUrl(){ return location.href.split('#')[0]; }
+function updateUrl(){
+  const url = getBaseUrl() + '#' + encodeState();
+  history.replaceState(null,'',url);
+  document.getElementById('shareLink').value = url;
+  document.getElementById('shareBox').classList.remove('hidden');
+}
+function normalize(s){ return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function requireAdmin(){
+  const key = document.getElementById('adminKey').value || '';
+  if(key !== (state.admin || ADMIN_DEFAULT)) throw new Error('Clave admin incorrecta.');
+}
+function init(){
+  const decoded = decodeState(location.hash);
+  if(decoded && decoded.players && decoded.matches) state = decoded;
+  render();
+  updateUrl();
+}
+function savePlayers(){
+  try{
+    requireAdmin();
+    const names = document.getElementById('playersInput').value.split('\n').map(x=>x.trim()).filter(Boolean);
+    if(names.length < 4) throw new Error('Agrega al menos 4 jugadores.');
+    const existing = state.players || {};
+    const next = {};
+    names.forEach(name=>{
+      const key = normalize(name);
+      next[key] = existing[key] || { name, elo:1000, played:0, wins:0, losses:0, gf:0, ga:0 };
+      next[key].name = name;
+    });
+    state.players = next;
+    state.matches = [];
+    updateUrl(); render(); ok('Jugadores guardados. Copia el link actualizado.');
+  }catch(e){ err(e.message); }
+}
+function splitTeam(t){ return t.split(/\s*(?:\/|\+|,| y )\s*/i).map(x=>x.trim()).filter(Boolean); }
+function findPlayer(name){
+  const p = state.players[normalize(name)];
+  if(!p) throw new Error('Jugador no encontrado: ' + name);
+  return p;
+}
+function validScore(a,b){
+  return (a===6 && b>=0 && b<=4) || (b===6 && a>=0 && a<=4) || (a===7 && (b===5 || b===6)) || (b===7 && (a===5 || a===6));
+}
+function marginMultiplier(a,b){
+  const m = Math.abs(a-b);
+  if(m>=6) return 1.60;
+  if(m===5) return 1.45;
+  if(m===4) return 1.30;
+  if(m===3) return 1.15;
+  if(m===2) return 1.00;
+  return 0.75;
+}
+function parseLine(line){
+  const clean = line.replace(/[–—]/g,'-').replace(/\s+/g,' ').trim();
+  const m = clean.match(/^(.+?)\s+(\d{1,2})\s*-\s*(\d{1,2})\s+(.+)$/);
+  if(!m) throw new Error('Formato inválido: ' + line);
+  const left = splitTeam(m[1]);
+  const right = splitTeam(m[4]);
+  const ga = Number(m[2]), gb = Number(m[3]);
+  if(left.length!==2 || right.length!==2) throw new Error('Cada equipo debe tener 2 jugadores: ' + line);
+  if(!validScore(ga,gb)) throw new Error('Marcador inválido: ' + ga + '-' + gb);
+  const ps = [findPlayer(left[0]),findPlayer(left[1]),findPlayer(right[0]),findPlayer(right[1])];
+  if(new Set(ps.map(p=>p.name)).size !== 4) throw new Error('Hay jugador repetido: ' + line);
+  return {raw:line,a:[ps[0],ps[1]],b:[ps[2],ps[3]],ga,gb,date:new Date().toISOString().slice(0,10)};
+}
+function addResults(){
+  try{
+    requireAdmin();
+    if(Object.keys(state.players).length < 4) throw new Error('Primero guarda los jugadores.');
+    const lines = document.getElementById('resultsInput').value.split('\n').map(x=>x.trim()).filter(Boolean);
+    if(!lines.length) throw new Error('Pega al menos un resultado.');
+    const parsed = lines.map(parseLine);
+    parsed.forEach(applyMatch);
+    document.getElementById('resultsInput').value='';
+    updateUrl(); render(); ok('Resultados cargados. Copia el link actualizado y mándalo al WhatsApp.');
+  }catch(e){ err(e.message); }
+}
+function applyMatch(m){
+  const avgA = (m.a[0].elo + m.a[1].elo)/2;
+  const avgB = (m.b[0].elo + m.b[1].elo)/2;
+  const scoreA = m.ga > m.gb ? 1 : 0;
+  const expectedA = 1 / (1 + Math.pow(10,(avgB-avgA)/400));
+  const deltaA = Math.round(32 * marginMultiplier(m.ga,m.gb) * (scoreA-expectedA));
+  const deltaB = -deltaA;
+  m.a.forEach(p=>{p.elo+=deltaA;p.played++;p.wins+=scoreA?1:0;p.losses+=scoreA?0:1;p.gf+=m.ga;p.ga+=m.gb;});
+  m.b.forEach(p=>{p.elo+=deltaB;p.played++;p.wins+=scoreA?0:1;p.losses+=scoreA?1:0;p.gf+=m.gb;p.ga+=m.ga;});
+  state.matches.push({date:m.date,teamA:m.a.map(p=>p.name),teamB:m.b.map(p=>p.name),score:m.ga+'-'+m.gb,winner:scoreA?'A':'B',deltaA,deltaB,raw:m.raw});
+}
+function render(){
+  const players = Object.values(state.players||{}).sort((a,b)=>b.elo-a.elo);
+  document.getElementById('ranking').innerHTML = players.length ? `<table><thead><tr><th>#</th><th>Jugador</th><th>ELO</th><th>PJ</th><th>G</th><th>P</th><th class="hide-mobile">%G</th><th class="hide-mobile">Dif</th></tr></thead><tbody>${players.map((p,i)=>`<tr><td class="rank ${i===0?'gold':''}">#${i+1}</td><td>${esc(p.name)}</td><td class="elo">${Math.round(p.elo)}</td><td>${p.played}</td><td>${p.wins}</td><td>${p.losses}</td><td class="hide-mobile">${p.played?Math.round(p.wins/p.played*100):0}%</td><td class="hide-mobile">${p.gf-p.ga}</td></tr>`).join('')}</tbody></table>` : '<div class="hint">Aún no hay jugadores. El admin debe cargarlos.</div>';
+  const hist = [...(state.matches||[])].reverse();
+  document.getElementById('history').innerHTML = hist.length ? `<table><thead><tr><th>Fecha</th><th>Partido</th></tr></thead><tbody>${hist.map(m=>`<tr><td>${esc(m.date)}</td><td>${esc(m.teamA.join(' / '))} <b>${esc(m.score)}</b> ${esc(m.teamB.join(' / '))}<br><span class="pill">Δ A ${m.deltaA>0?'+':''}${m.deltaA} · Δ B ${m.deltaB>0?'+':''}${m.deltaB}</span></td></tr>`).join('')}</tbody></table>` : '<div class="hint">Sin partidos todavía.</div>';
+}
+function copyShareLink(){
+  updateUrl();
+  const el = document.getElementById('shareLink'); el.select(); document.execCommand('copy'); ok('Link copiado. Pégalo en WhatsApp.');
+}
+function resetAll(){
+  try{ requireAdmin(); if(!confirm('¿Seguro que quieres resetear todo?')) return; state={players:{},matches:[],admin:state.admin||ADMIN_DEFAULT}; updateUrl(); render(); ok('Ranking reseteado.'); }catch(e){err(e.message)}
+}
+function ok(t){ const m=document.getElementById('msg'); m.textContent=t; m.className='msg ok'; }
+function err(t){ const m=document.getElementById('msg'); m.textContent=t; m.className='msg err'; }
+function esc(v){ return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
+init();
+</script>
+</body>
+</html>
