@@ -1,195 +1,34 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Ranking Pádel ELO</title>
-  <style>
-    :root{--bg:#07111f;--card:#0f1b2e;--card2:#14233b;--text:#f8fafc;--muted:#9fb0c8;--accent:#38d96b;--danger:#ff6262;--line:#263852;--gold:#facc15}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at top,#12345a 0,#07111f 55%);color:var(--text)}header{padding:28px 16px 10px;text-align:center}h1{margin:0;font-size:30px}header p{margin:8px 0 0;color:var(--muted)}main{max-width:1040px;margin:0 auto;padding:16px;display:grid;gap:16px}.card{background:rgba(15,27,46,.94);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.26)}h2{margin:0 0 12px;font-size:20px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;font-size:14px}th{color:var(--muted);font-weight:700}tr:last-child td{border-bottom:0}.rank{font-weight:900}.elo{font-weight:900;color:var(--accent)}.gold{color:var(--gold)}input,textarea,button,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:12px;background:var(--card2);color:var(--text);font-size:16px}textarea{min-height:140px;resize:vertical;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}button{border:0;background:var(--accent);color:#06240f;font-weight:900;margin-top:10px;cursor:pointer}.secondary{background:#28415f;color:var(--text)}.danger{background:var(--danger);color:#320707}.hint{color:var(--muted);font-size:13px;line-height:1.45;margin-top:8px}.msg{white-space:pre-line;margin-top:10px;font-weight:800}.ok{color:var(--accent)}.err{color:var(--danger)}.pill{display:inline-block;padding:4px 9px;border-radius:999px;background:#1f3554;color:#cbd5e1;font-size:12px}.copybox{margin-top:10px}.small{font-size:13px;color:var(--muted)}.hidden{display:none}@media(max-width:760px){.grid{grid-template-columns:1fr}th,td{font-size:13px;padding:9px 6px}.hide-mobile{display:none}h1{font-size:25px}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ranking Pádel ELO</title>
+<style>
+:root{--bg:#f7f7f5;--card:#fff;--line:#e7e7e2;--text:#171717;--muted:#707070;--green:#16834a;--red:#b64646;--soft:#f4f4f1;--shadow:0 8px 28px rgba(0,0,0,.05)}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1060px;margin:0 auto;padding:24px 14px 44px}.hero,.card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}.hero{border-radius:24px;padding:24px;margin-bottom:16px}.card{border-radius:18px;padding:20px}h1{font-size:34px;line-height:1.05;margin:0;letter-spacing:-.04em}h2{font-size:22px;margin:0 0 8px;letter-spacing:-.02em}p{margin:0}.muted,.note{color:var(--muted)}.note{font-size:14px;margin-bottom:14px}.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.chip{background:#fafaf8;border:1px solid var(--line);border-radius:999px;padding:8px 12px;font-size:13px;font-weight:650;color:#444}.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;margin-bottom:16px}.admin{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}table{width:100%;border-collapse:collapse}th,td{border-bottom:1px solid #eeeeea;padding:12px 8px;text-align:left;font-size:14px;vertical-align:middle}th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}tr:last-child td{border-bottom:0}.medal{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;background:#f1f1ee;font-weight:800}.gold{background:#fff2bd}.silver{background:#ececec}.bronze{background:#f4dfcf}.name{font-weight:750}.elo{font-weight:850;color:var(--green)}.history{display:grid;gap:10px}.match{border:1px solid var(--line);border-radius:14px;padding:12px 14px;background:#fdfdfc}.matchTop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:6px}.score{font-size:18px;font-weight:850}.date{font-size:13px;color:var(--muted)}.teams{font-size:14px;line-height:1.45}.delta{font-size:12px;color:var(--muted);margin-top:8px}label{display:block;font-size:13px;color:var(--muted);font-weight:750;margin-bottom:8px}input,textarea{width:100%;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--text);padding:12px 14px;font:inherit}textarea{min-height:150px;resize:vertical}.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:12px;background:#171717;color:#fff;padding:12px 16px;font:inherit;font-weight:750;cursor:pointer}.secondary{background:var(--soft);color:var(--text);border:1px solid var(--line)}.danger{background:#fff2f2;color:var(--red);border:1px solid #efd0d0}.tip{font-size:13px;color:var(--muted);line-height:1.45;margin-top:10px}.msg{font-size:14px;font-weight:750;white-space:pre-line;margin-top:12px}.ok{color:var(--green)}.err{color:var(--red)}.share{display:none;margin-top:14px;background:#f5f7fb;border:1px solid var(--line);border-radius:14px;padding:12px}.share textarea{min-height:82px}.empty{font-size:14px;color:var(--muted);padding:8px 0}.footer{font-size:13px;color:var(--muted);margin-top:16px;line-height:1.5}@media(max-width:860px){.grid,.admin{grid-template-columns:1fr}h1{font-size:28px}.hide{display:none}.wrap{padding:14px 10px 34px}.hero,.card{padding:16px}.btns{flex-direction:column}button{width:100%}}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Ranking Pádel ELO</h1>
-    <p>2v2 · 1 set · ranking histórico · link abierto</p>
-  </header>
-  <main>
-    <section class="card">
-      <h2>Ranking</h2>
-      <div id="ranking"></div>
-    </section>
-
-    <div class="grid">
-      <section class="card">
-        <h2>Administrar resultados</h2>
-        <input id="adminKey" type="password" placeholder="Clave admin" />
-        <textarea id="playersInput" placeholder="Jugadores, uno por línea. Ejemplo:
-Juan
-Pedro
-Diego
-Pablo
-Toto
-Nico
-Seba
-Fabián"></textarea>
-        <button class="secondary" onclick="savePlayers()">Guardar jugadores iniciales</button>
-        <div class="hint">Haz esto una vez. La clave inicial es <b>padel</b>. Puedes cambiarla abajo.</div>
-
-        <hr style="border-color:var(--line);margin:18px 0">
-        <textarea id="resultsInput" placeholder="Pega resultados desde WhatsApp. Ejemplo:
-Juan / Pedro 6-2 Diego / Pablo
-Toto + Nico 7-6 Seba + Fabián"></textarea>
-        <button onclick="addResults()">Cargar resultados y generar link</button>
-        <button class="secondary" onclick="copyShareLink()">Copiar link actualizado para WhatsApp</button>
-        <button class="danger" onclick="resetAll()">Resetear ranking</button>
-        <div id="msg" class="msg"></div>
-        <div class="copybox hidden" id="shareBox">
-          <div class="small">Link actualizado:</div>
-          <textarea id="shareLink" readonly></textarea>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Historial</h2>
-        <div id="history"></div>
-      </section>
-    </div>
-
-    <section class="card">
-      <h2>Cómo usarlo</h2>
-      <div class="hint">
-        1. Define jugadores una vez.<br>
-        2. Cada semana pega los resultados.<br>
-        3. La página recalcula el ELO.<br>
-        4. Copia el link actualizado y mándalo por WhatsApp.<br><br>
-        Nota honesta: esta versión no usa servidor ni base de datos. El ranking viaja dentro del link, por eso funciona como URL abierta sin login ni instalación.
-      </div>
-    </section>
-  </main>
-
+<div class="wrap">
+<section class="hero"><h1>Ranking Pádel ELO</h1><p class="muted" style="margin-top:10px">Ranking histórico para tu grupo. Pega resultados, recalcula y comparte el link actualizado.</p><div class="chips"><span class="chip">2 vs 2</span><span class="chip">1 set</span><span class="chip">ELO individual</span><span class="chip">Historial</span></div></section>
+<section class="grid"><article class="card"><h2>Ranking</h2><p class="note">Ordenado por ELO actual.</p><div id="ranking"></div></article><article class="card"><h2>Historial</h2><p class="note">Últimos partidos cargados.</p><div id="history"></div></article></section>
+<section class="card"><h2>Administración</h2><p class="note">Solo el admin carga jugadores y resultados.</p><div style="max-width:340px"><label>Clave admin</label><input id="adminKey" type="password" placeholder="Clave"></div><div class="admin"><div><label>Jugadores</label><textarea id="playersInput" placeholder="Un jugador por línea.&#10;Ejemplo:&#10;Juan&#10;Pedro&#10;Diego&#10;Pablo&#10;Toto&#10;Nico"></textarea><div class="btns"><button class="secondary" onclick="savePlayers()">Guardar jugadores</button></div><div class="tip">Clave inicial: <b>padel</b>.</div></div><div><label>Resultados</label><textarea id="resultsInput" placeholder="Pega resultados desde WhatsApp.&#10;Ejemplos:&#10;Juan / Pedro 6-2 Diego / Pablo&#10;Toto + Nico 7-6 Seba + Fabián"></textarea><div class="btns"><button onclick="addResults()">Cargar resultados</button><button class="secondary" onclick="copyShareLink()">Copiar link</button><button class="danger" onclick="resetAll()">Resetear</button></div><div class="tip">Un 6-0 mueve más ELO que un 7-6.</div></div></div><div id="msg" class="msg"></div><div id="shareBox" class="share"><label>Link actualizado para WhatsApp</label><textarea id="shareLink" readonly></textarea></div><div class="footer">Funciona sin login ni base de datos: el estado del ranking viaja dentro del link compartido.</div></section>
+</div>
 <script>
-const ADMIN_DEFAULT = 'padel';
-let state = { players:{}, matches:[], admin:'padel' };
-
-function encodeState(){
-  const json = JSON.stringify(state);
-  const b64 = btoa(unescape(encodeURIComponent(json))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','');
-  return b64;
-}
-function decodeState(hash){
-  try{
-    if(!hash || hash.length < 2) return null;
-    let b64 = hash.replace(/^#/,'').replaceAll('-','+').replaceAll('_','/');
-    while(b64.length % 4) b64 += '=';
-    return JSON.parse(decodeURIComponent(escape(atob(b64))));
-  }catch(e){ return null; }
-}
-function getBaseUrl(){ return location.href.split('#')[0]; }
-function updateUrl(){
-  const url = getBaseUrl() + '#' + encodeState();
-  history.replaceState(null,'',url);
-  document.getElementById('shareLink').value = url;
-  document.getElementById('shareBox').classList.remove('hidden');
-}
-function normalize(s){ return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
-function requireAdmin(){
-  const key = document.getElementById('adminKey').value || '';
-  if(key !== (state.admin || ADMIN_DEFAULT)) throw new Error('Clave admin incorrecta.');
-}
-function init(){
-  const decoded = decodeState(location.hash);
-  if(decoded && decoded.players && decoded.matches) state = decoded;
-  render();
-  updateUrl();
-}
-function savePlayers(){
-  try{
-    requireAdmin();
-    const names = document.getElementById('playersInput').value.split('\n').map(x=>x.trim()).filter(Boolean);
-    if(names.length < 4) throw new Error('Agrega al menos 4 jugadores.');
-    const existing = state.players || {};
-    const next = {};
-    names.forEach(name=>{
-      const key = normalize(name);
-      next[key] = existing[key] || { name, elo:1000, played:0, wins:0, losses:0, gf:0, ga:0 };
-      next[key].name = name;
-    });
-    state.players = next;
-    state.matches = [];
-    updateUrl(); render(); ok('Jugadores guardados. Copia el link actualizado.');
-  }catch(e){ err(e.message); }
-}
-function splitTeam(t){ return t.split(/\s*(?:\/|\+|,| y )\s*/i).map(x=>x.trim()).filter(Boolean); }
-function findPlayer(name){
-  const p = state.players[normalize(name)];
-  if(!p) throw new Error('Jugador no encontrado: ' + name);
-  return p;
-}
-function validScore(a,b){
-  return (a===6 && b>=0 && b<=4) || (b===6 && a>=0 && a<=4) || (a===7 && (b===5 || b===6)) || (b===7 && (a===5 || a===6));
-}
-function marginMultiplier(a,b){
-  const m = Math.abs(a-b);
-  if(m>=6) return 1.60;
-  if(m===5) return 1.45;
-  if(m===4) return 1.30;
-  if(m===3) return 1.15;
-  if(m===2) return 1.00;
-  return 0.75;
-}
-function parseLine(line){
-  const clean = line.replace(/[–—]/g,'-').replace(/\s+/g,' ').trim();
-  const m = clean.match(/^(.+?)\s+(\d{1,2})\s*-\s*(\d{1,2})\s+(.+)$/);
-  if(!m) throw new Error('Formato inválido: ' + line);
-  const left = splitTeam(m[1]);
-  const right = splitTeam(m[4]);
-  const ga = Number(m[2]), gb = Number(m[3]);
-  if(left.length!==2 || right.length!==2) throw new Error('Cada equipo debe tener 2 jugadores: ' + line);
-  if(!validScore(ga,gb)) throw new Error('Marcador inválido: ' + ga + '-' + gb);
-  const ps = [findPlayer(left[0]),findPlayer(left[1]),findPlayer(right[0]),findPlayer(right[1])];
-  if(new Set(ps.map(p=>p.name)).size !== 4) throw new Error('Hay jugador repetido: ' + line);
-  return {raw:line,a:[ps[0],ps[1]],b:[ps[2],ps[3]],ga,gb,date:new Date().toISOString().slice(0,10)};
-}
-function addResults(){
-  try{
-    requireAdmin();
-    if(Object.keys(state.players).length < 4) throw new Error('Primero guarda los jugadores.');
-    const lines = document.getElementById('resultsInput').value.split('\n').map(x=>x.trim()).filter(Boolean);
-    if(!lines.length) throw new Error('Pega al menos un resultado.');
-    const parsed = lines.map(parseLine);
-    parsed.forEach(applyMatch);
-    document.getElementById('resultsInput').value='';
-    updateUrl(); render(); ok('Resultados cargados. Copia el link actualizado y mándalo al WhatsApp.');
-  }catch(e){ err(e.message); }
-}
-function applyMatch(m){
-  const avgA = (m.a[0].elo + m.a[1].elo)/2;
-  const avgB = (m.b[0].elo + m.b[1].elo)/2;
-  const scoreA = m.ga > m.gb ? 1 : 0;
-  const expectedA = 1 / (1 + Math.pow(10,(avgB-avgA)/400));
-  const deltaA = Math.round(32 * marginMultiplier(m.ga,m.gb) * (scoreA-expectedA));
-  const deltaB = -deltaA;
-  m.a.forEach(p=>{p.elo+=deltaA;p.played++;p.wins+=scoreA?1:0;p.losses+=scoreA?0:1;p.gf+=m.ga;p.ga+=m.gb;});
-  m.b.forEach(p=>{p.elo+=deltaB;p.played++;p.wins+=scoreA?0:1;p.losses+=scoreA?1:0;p.gf+=m.gb;p.ga+=m.ga;});
-  state.matches.push({date:m.date,teamA:m.a.map(p=>p.name),teamB:m.b.map(p=>p.name),score:m.ga+'-'+m.gb,winner:scoreA?'A':'B',deltaA,deltaB,raw:m.raw});
-}
-function render(){
-  const players = Object.values(state.players||{}).sort((a,b)=>b.elo-a.elo);
-  document.getElementById('ranking').innerHTML = players.length ? `<table><thead><tr><th>#</th><th>Jugador</th><th>ELO</th><th>PJ</th><th>G</th><th>P</th><th class="hide-mobile">%G</th><th class="hide-mobile">Dif</th></tr></thead><tbody>${players.map((p,i)=>`<tr><td class="rank ${i===0?'gold':''}">#${i+1}</td><td>${esc(p.name)}</td><td class="elo">${Math.round(p.elo)}</td><td>${p.played}</td><td>${p.wins}</td><td>${p.losses}</td><td class="hide-mobile">${p.played?Math.round(p.wins/p.played*100):0}%</td><td class="hide-mobile">${p.gf-p.ga}</td></tr>`).join('')}</tbody></table>` : '<div class="hint">Aún no hay jugadores. El admin debe cargarlos.</div>';
-  const hist = [...(state.matches||[])].reverse();
-  document.getElementById('history').innerHTML = hist.length ? `<table><thead><tr><th>Fecha</th><th>Partido</th></tr></thead><tbody>${hist.map(m=>`<tr><td>${esc(m.date)}</td><td>${esc(m.teamA.join(' / '))} <b>${esc(m.score)}</b> ${esc(m.teamB.join(' / '))}<br><span class="pill">Δ A ${m.deltaA>0?'+':''}${m.deltaA} · Δ B ${m.deltaB>0?'+':''}${m.deltaB}</span></td></tr>`).join('')}</tbody></table>` : '<div class="hint">Sin partidos todavía.</div>';
-}
-function copyShareLink(){
-  updateUrl();
-  const el = document.getElementById('shareLink'); el.select(); document.execCommand('copy'); ok('Link copiado. Pégalo en WhatsApp.');
-}
-function resetAll(){
-  try{ requireAdmin(); if(!confirm('¿Seguro que quieres resetear todo?')) return; state={players:{},matches:[],admin:state.admin||ADMIN_DEFAULT}; updateUrl(); render(); ok('Ranking reseteado.'); }catch(e){err(e.message)}
-}
-function ok(t){ const m=document.getElementById('msg'); m.textContent=t; m.className='msg ok'; }
-function err(t){ const m=document.getElementById('msg'); m.textContent=t; m.className='msg err'; }
-function esc(v){ return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }
-init();
+const ADMIN_DEFAULT='padel';let state={players:{},matches:[],admin:'padel'};
+function enc(){return btoa(unescape(encodeURIComponent(JSON.stringify(state)))).replaceAll('+','-').replaceAll('/','_').replaceAll('=','')}
+function dec(h){try{if(!h||h.length<2)return null;let b=h.replace(/^#/,'').replaceAll('-','+').replaceAll('_','/');while(b.length%4)b+='=';return JSON.parse(decodeURIComponent(escape(atob(b))))}catch(e){return null}}
+function base(){return location.href.split('#')[0]}function updateUrl(){let u=base()+'#'+enc();history.replaceState(null,'',u);shareLink.value=u;shareBox.style.display='block'}
+function norm(s){return String(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}function esc(v){return String(v??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;')}
+function req(){if((adminKey.value||'')!==(state.admin||ADMIN_DEFAULT))throw new Error('Clave admin incorrecta.')}function ok(t){msg.textContent=t;msg.className='msg ok'}function err(t){msg.textContent=t;msg.className='msg err'}
+function splitTeam(t){return t.split(/\s*(?:\/|\+|,| y )\s*/i).map(x=>x.trim()).filter(Boolean)}function findPlayer(n){let p=state.players[norm(n)];if(!p)throw new Error('Jugador no encontrado: '+n);return p}
+function valid(a,b){return(a===6&&b>=0&&b<=4)||(b===6&&a>=0&&a<=4)||(a===7&&(b===5||b===6))||(b===7&&(a===5||a===6))}function mult(a,b){let m=Math.abs(a-b);if(m>=6)return 1.6;if(m===5)return 1.45;if(m===4)return 1.3;if(m===3)return 1.15;if(m===2)return 1;return .75}
+function parseLine(line){let c=line.replace(/[–—]/g,'-').replace(/\s+/g,' ').trim(),m=c.match(/^(.+?)\s+(\d{1,2})\s*-\s*(\d{1,2})\s+(.+)$/);if(!m)throw new Error('Formato inválido: '+line);let A=splitTeam(m[1]),B=splitTeam(m[4]),ga=Number(m[2]),gb=Number(m[3]);if(A.length!==2||B.length!==2)throw new Error('Cada equipo debe tener 2 jugadores: '+line);if(!valid(ga,gb))throw new Error('Marcador inválido: '+ga+'-'+gb);let ps=[findPlayer(A[0]),findPlayer(A[1]),findPlayer(B[0]),findPlayer(B[1])];if(new Set(ps.map(p=>p.name)).size!==4)throw new Error('Hay jugador repetido: '+line);return{raw:line,a:[ps[0],ps[1]],b:[ps[2],ps[3]],ga,gb,date:new Date().toISOString().slice(0,10)}}
+function savePlayers(){try{req();let names=playersInput.value.split('\n').map(x=>x.trim()).filter(Boolean);if(names.length<4)throw new Error('Agrega al menos 4 jugadores.');let old=state.players||{},next={};names.forEach(name=>{let k=norm(name);next[k]=old[k]||{name,elo:1000,played:0,wins:0,losses:0,gf:0,ga:0};next[k].name=name});state.players=next;state.matches=[];updateUrl();render();ok('Jugadores guardados.')}catch(e){err(e.message)}}
+function applyMatch(m){let avgA=(m.a[0].elo+m.a[1].elo)/2,avgB=(m.b[0].elo+m.b[1].elo)/2,scoreA=m.ga>m.gb?1:0,expA=1/(1+Math.pow(10,(avgB-avgA)/400)),dA=Math.round(32*mult(m.ga,m.gb)*(scoreA-expA)),dB=-dA;m.a.forEach(p=>{p.elo+=dA;p.played++;p.wins+=scoreA?1:0;p.losses+=scoreA?0:1;p.gf+=m.ga;p.ga+=m.gb});m.b.forEach(p=>{p.elo+=dB;p.played++;p.wins+=scoreA?0:1;p.losses+=scoreA?1:0;p.gf+=m.gb;p.ga+=m.ga});state.matches.push({date:m.date,teamA:m.a.map(p=>p.name),teamB:m.b.map(p=>p.name),score:m.ga+'-'+m.gb,deltaA:dA,deltaB:dB,raw:m.raw})}
+function addResults(){try{req();if(Object.keys(state.players).length<4)throw new Error('Primero guarda los jugadores.');let lines=resultsInput.value.split('\n').map(x=>x.trim()).filter(Boolean);if(!lines.length)throw new Error('Pega al menos un resultado.');lines.map(parseLine).forEach(applyMatch);resultsInput.value='';updateUrl();render();ok('Resultados cargados. Link actualizado listo para compartir.')}catch(e){err(e.message)}}
+function render(){let ps=Object.values(state.players||{}).sort((a,b)=>b.elo-a.elo);ranking.innerHTML=ps.length?`<table><thead><tr><th>#</th><th>Jugador</th><th>ELO</th><th>PJ</th><th>G</th><th>P</th><th class="hide">Dif</th></tr></thead><tbody>${ps.map((p,i)=>{let cls=i===0?'gold':i===1?'silver':i===2?'bronze':'';return`<tr><td><span class="medal ${cls}">${i+1}</span></td><td class="name">${esc(p.name)}</td><td class="elo">${Math.round(p.elo)}</td><td>${p.played}</td><td>${p.wins}</td><td>${p.losses}</td><td class="hide">${p.gf-p.ga}</td></tr>`}).join('')}</tbody></table>`:'<div class="empty">Todavía no hay jugadores cargados.</div>';let h=[...(state.matches||[])].reverse();history.innerHTML=h.length?`<div class="history">${h.map(x=>`<div class="match"><div class="matchTop"><span class="date">${esc(x.date)}</span><span class="score">${esc(x.score)}</span></div><div class="teams">${esc(x.teamA.join(' / '))}<br>${esc(x.teamB.join(' / '))}</div><div class="delta">ELO A: ${x.deltaA>0?'+':''}${x.deltaA} · ELO B: ${x.deltaB>0?'+':''}${x.deltaB}</div></div>`).join('')}</div>`:'<div class="empty">Todavía no hay resultados cargados.</div>'}
+function copyShareLink(){updateUrl();shareLink.select();shareLink.setSelectionRange(0,99999);document.execCommand('copy');ok('Link copiado.')}function resetAll(){try{req();if(!confirm('¿Seguro que quieres resetear todo?'))return;state={players:{},matches:[],admin:state.admin||ADMIN_DEFAULT};updateUrl();render();ok('Ranking reseteado.')}catch(e){err(e.message)}}
+function init(){let d=dec(location.hash);if(d&&d.players&&d.matches)state=d;render();updateUrl()}init();
 </script>
 </body>
 </html>
